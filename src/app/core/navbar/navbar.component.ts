@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DataStorageService } from '../services/data-storage.service';
+import { DataStorageService } from '../../shared/services/data-storage.service';
 import { AuthService } from '../../auth/auth.service';
 import { Router } from '@angular/router';
 
@@ -25,6 +25,10 @@ export class NavbarComponent implements OnInit {
 
   onFetchData() {
     this.dataStorageService.getRecipes();
+  }
+
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
   }
 
   onLogout() {
