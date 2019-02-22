@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest } from '@angular/common/http';
 import { RecipeService } from '../../recipes/recipe.service';
 import { Recipe } from '../../recipes/recipe.model';
 import { map } from 'rxjs/operators';
@@ -11,15 +11,27 @@ export class DataStorageService {
     constructor(private http: HttpClient, private recipeService: RecipeService, private authService: AuthService) { }
 
     storeRecipes() {
-        const token = this.authService.getToken();
-        return this.http.put(this.url + 'recipes.json?auth=' + token, this.recipeService.getRecipes());
+        // const header = new HttpHeaders().set('Authorization', 'Bearer ajasdijas').append('', '');
+
+        // return this.http.put(this.url + 'recipes.json', this.recipeService.getRecipes(), {
+        //     observe: 'body',
+        //     params: new HttpParams().set('auth', token)
+        //     // headers: header
+        // });
+        const req = new HttpRequest('PUT', this.url + 'recipes.json', this.recipeService.getRecipes(), {
+            reportProgress: true
+        });
+        return this.http.request(req);
     }
 
     getRecipes() {
-        const token = this.authService.getToken();
-        this.http.get(this.url + 'recipes.json?auth=' + token)
+        // this.http.get<Recipe[]>(this.url + 'recipes.json?auth=' + token)
+        this.http.get<Recipe[]>(this.url + 'recipes.json', {
+            observe: 'body',
+            responseType: 'json'
+        })
             .pipe(
-                map((recipes: Recipe[]) => {
+                map((recipes) => {
                     for (const recipe of recipes) {
                         if (!recipe['ingredients']) {
                             recipe['ingredients'] = [];
