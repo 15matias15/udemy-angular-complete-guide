@@ -1,5 +1,5 @@
 import { Recipe } from '../recipe.model';
-import { Ingredient } from 'src/app/shared/models/ingredient.model';
+import { Ingredient } from '../../shared/models/ingredient.model';
 import * as RecipeActions from './recipe.actions';
 import * as fromApp from '../../store/app.reducers';
 
