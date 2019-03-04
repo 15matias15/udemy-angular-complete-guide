@@ -1,7 +1,11 @@
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { Component, OnInit } from '@angular/core';
-import { DataStorageService } from '../../shared/services/data-storage.service';
-import { AuthService } from '../../auth/auth.service';
-import { Router } from '@angular/router';
+
+import * as fromApp from '../../store/app.reducers';
+import * as fromAuth from '../../auth/store/auth.reducers';
+import * as AuthActions from '../../auth/store/auth.actions';
+import * as RecipeActions from '../../recipes/store/recipe.actions';
 
 @Component({
   selector: 'app-navbar',
@@ -9,30 +13,22 @@ import { Router } from '@angular/router';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  constructor(private dataStorageService: DataStorageService, private authService: AuthService, private router: Router) { }
+  authState: Observable<fromAuth.State>;
+  constructor(private store: Store<fromApp.AppState>) {}
 
   ngOnInit() {
+    this.authState = this.store.select('auth');
   }
 
   onSaveData() {
-    this.dataStorageService.storeRecipes()
-      .subscribe(
-        (response) => {
-          console.log(response);
-        }
-      );
+    this.store.dispatch(new RecipeActions.StoreRecipes());
   }
 
   onFetchData() {
-    this.dataStorageService.getRecipes();
-  }
-
-  isAuthenticated() {
-    return this.authService.isAuthenticated();
+    this.store.dispatch(new RecipeActions.FetchRecipes());
   }
 
   onLogout() {
-    this.authService.logout();
-    this.router.navigate(['/']);
+    this.store.dispatch(new AuthActions.Logout());
   }
 }
